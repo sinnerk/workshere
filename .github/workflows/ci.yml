@@ -1,0 +1,78 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+# A newer push makes an older run irrelevant; cancel it instead of queueing
+# behind a stalled runner.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    # A hosted runner can wedge. Fail in minutes, not in most of an hour.
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-latest, ubuntu-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version: stable
+
+      - name: gofmt
+        shell: bash
+        run: |
+          unformatted="$(gofmt -l .)"
+          if [ -n "$unformatted" ]; then
+            echo "gofmt needed on:"
+            echo "$unformatted"
+            exit 1
+          fi
+
+      - name: vet
+        run: go vet ./...
+
+      - name: test
+        run: go test -timeout 5m ./...
+
+      - name: build
+        run: go build ./...
+
+  selfcheck:
+    name: preflight on this repository
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version: stable
+
+      - name: build
+        run: go build -o workshere ./cmd/workshere
+
+      # The tool has to be clean on its own repository. A regression that makes
+      # it accuse a healthy repo fails here before it reaches a user.
+      - name: must be clean
+        run: ./workshere --no-color
+
+      - name: machine-readable report
+        run: ./workshere --json --redact > report.json
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: workshere-report
+          path: report.json

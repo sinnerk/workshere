@@ -1,0 +1,11 @@
+# build output
+/workshere
+/workshere.exe
+/dist/
+
+# local scratch
+*.log
+*.tmp
+.DS_Store
+Thumbs.db
+desktop.ini

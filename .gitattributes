@@ -1,0 +1,10 @@
+# This repository is checked by workshere itself, which reports CRLF shebangs
+# and case collisions. Pin the line ending policy rather than inheriting it
+# from whatever machine happens to clone it.
+* text=auto eol=lf
+
+*.png binary
+*.jpg binary
+*.gif binary
+*.ico binary
+*.exe binary
