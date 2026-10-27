@@ -1,5 +1,10 @@
 # workshere
 
+[![ci](https://github.com/sinnerk/workshere/actions/workflows/ci.yml/badge.svg)](https://github.com/sinnerk/workshere/actions/workflows/ci.yml)
+[![release](https://img.shields.io/github/v/release/sinnerk/workshere)](https://github.com/sinnerk/workshere/releases)
+[![go](https://img.shields.io/github/go-mod/go-version/sinnerk/workshere)](go.mod)
+[![license](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+
 **Your code works here. Find out what will fail there — before you push.**
 
 CI fails for reasons a local run can never show you: a file that exists only on your disk, an import whose letter case Windows forgives, a lockfile you forgot to commit, a runtime version you have never actually run.
